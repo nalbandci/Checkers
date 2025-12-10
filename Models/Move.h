@@ -1,27 +1,44 @@
 #pragma once
 #include <stdlib.h>
 
+// Определение типа для координат на доске
+// int8_t достаточно для хранения координат от 0 до 7 (и -1 для специальных значений)
+// Это экономит память и повышает производительность
 typedef int8_t POS_T;
 
+// Структура move_pos представляет один ход в игре в шашки
+// Хранит информацию о начальной позиции, конечной позиции и побитой шашке (если есть)
 struct move_pos
 {
-    POS_T x, y;             // from
-    POS_T x2, y2;           // to
-    POS_T xb = -1, yb = -1; // beaten
+    POS_T x, y;             // Координаты начальной позиции шашки (откуда ходим)
+    POS_T x2, y2;           // Координаты конечной позиции шашки (куда ходим)
+    POS_T xb = -1, yb = -1; // Координаты побитой шашки (если ход является боем)
+    // Значения -1 указывают, что это простой ход без боя
 
-    move_pos(const POS_T x, const POS_T y, const POS_T x2, const POS_T y2) : x(x), y(y), x2(x2), y2(y2)
+// Конструктор для простого хода (без боя)
+    move_pos(const POS_T x, const POS_T y, const POS_T x2, const POS_T y2)
+        : x(x), y(y), x2(x2), y2(y2)
     {
     }
-    move_pos(const POS_T x, const POS_T y, const POS_T x2, const POS_T y2, const POS_T xb, const POS_T yb)
+
+    // Конструктор для хода с боем (с указанием побитой шашки)
+    move_pos(const POS_T x, const POS_T y, const POS_T x2, const POS_T y2,
+        const POS_T xb, const POS_T yb)
         : x(x), y(y), x2(x2), y2(y2), xb(xb), yb(yb)
     {
     }
 
-    bool operator==(const move_pos &other) const
+    // Оператор сравнения на равенство двух ходов
+    // Два хода считаются равными, если совпадают начальные и конечные координаты
+    // Координаты побитой шашки не учитываются при сравнении
+    bool operator==(const move_pos& other) const
     {
-        return (x == other.x && y == other.y && x2 == other.x2 && y2 == other.y2);
+        return (x == other.x && y == other.y &&
+            x2 == other.x2 && y2 == other.y2);
     }
-    bool operator!=(const move_pos &other) const
+
+    // Оператор сравнения на неравенство - просто инвертирует результат оператора ==
+    bool operator!=(const move_pos& other) const
     {
         return !(*this == other);
     }
